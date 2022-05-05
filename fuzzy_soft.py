@@ -5,9 +5,9 @@ from skfuzzy.control import Antecedent, Consequent, Rule
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
-vel = Antecedent(np.linspace(0, 10, 200), 'vel')
-dist = Antecedent(np.linspace(0, 8, 200), 'dist')
-new_vel = Consequent(np.linspace(-2, 10, 200), 'new_vel')
+vel = Antecedent(np.linspace(0, 10, 100), 'vel')
+dist = Antecedent(np.linspace(0, 8, 100), 'dist')
+new_vel = Consequent(np.linspace(-2, 10, 100), 'new_vel')
 
 vel.automf(3, names=['l', 'm', 'h'])
 
@@ -20,9 +20,12 @@ new_vel['m'] = fuzz.trimf(new_vel.universe, [0, 2, 4])
 new_vel['h'] = fuzz.trapmf(new_vel.universe, [8, 9, 10, 10])
 
 rules = [
-    Rule(dist['h'], new_vel['h']),
+    Rule(dist['h'] & (vel['l']), new_vel['m']),
+    Rule(dist['h'] & (vel['m'] | vel['h']), new_vel['h']),
+
     Rule(dist['m'] & vel['h'], new_vel['l']),
     Rule(dist['m'] & (vel['l'] | vel['m']), new_vel['m']),
+
     Rule(dist['l'], new_vel['l']),
 ]
 
